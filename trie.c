@@ -1,12 +1,17 @@
 #include "trie.h"
 #include "queue.h"
+#include <ctype.h>
 #include <stdlib.h>
 
 Diccionario crear_diccionario() {
   Diccionario vacio = calloc(1, sizeof(_Diccionario));
-  vacio->profundidad = 0;
+  vacio->profundidad = 0; // redundante
   vacio->letraFinal = NO_FINAL;
-  vacio->tipoPrefijo = NO_FINAL;
+  /*vacio->prefijoMasLargo = NULL;
+  vacio->terminalMasLargo = NULL;
+  for (int i = 0; i < CANT_LETRAS; i++)
+    vacio->siguientes[i] = NULL;
+  */
   return vacio;
 }
 
@@ -20,9 +25,7 @@ void destruir_diccionario(Diccionario destruir) {
 
 int diccionario_vacio(Diccionario inicio) { return inicio == NULL; }
 
-int posicion_asociada(char letra) {
-  return tolower(letra) - CANT_LETRAS - OFFSET;
-}
+int posicion_asociada(char letra) { return tolower(letra) - OFFSET; }
 
 Diccionario siguiente_estado(Diccionario letraActual, char letra) {
   int numeroAsociado = posicion_asociada(letra);
@@ -31,9 +34,9 @@ Diccionario siguiente_estado(Diccionario letraActual, char letra) {
 
 Diccionario crear_siguiente_estado(Diccionario posicionActual, char letra) {
   Diccionario nodoSiguiente = siguiente_estado(posicionActual, letra);
-  int numeroAsociado = posicion_asociada(letra);
 
   if (diccionario_vacio(nodoSiguiente)) { // si el estado no existe
+    int numeroAsociado = posicion_asociada(letra);
     nodoSiguiente = crear_diccionario();
     nodoSiguiente->profundidad = posicionActual->profundidad + 1;
     posicionActual->siguientes[numeroAsociado] = nodoSiguiente;
@@ -50,7 +53,6 @@ void agregar_palabra(Diccionario *inicio, char *palabra) {
     *inicio = crear_diccionario();
   }
 
-  char letra;
   Diccionario recorredor = *inicio;
 
   for (int i = 0; palabra[i] != '\0'; i++) {
@@ -62,28 +64,29 @@ void agregar_palabra(Diccionario *inicio, char *palabra) {
 char proxima_minuscula(FILE *fuente) { return tolower(fgetc(fuente)); }
 
 void agregar_archivo(Diccionario *inicio, FILE *fuente) {
-  Diccionario posicionActual = *inicio, nodoSiguiente;
+  Diccionario posicionActual = *inicio;
   for (char letraActual = proxima_minuscula(fuente); letraActual != EOF;
        letraActual = proxima_minuscula(fuente)) {
 
     if (isalpha(letraActual)) {
       posicionActual = crear_siguiente_estado(posicionActual, letraActual);
-    } else {
+    } else if (letraActual == '\n') {
       posicionActual->letraFinal = FINAL;
       posicionActual = *inicio;
     }
   }
+  posicionActual->letraFinal = FINAL;
 }
 
-Queue invariantes_Aho_Corasick(Diccionario inicio) {
-  inicio->prefijoMasLargo = inicio;
-  Diccionario nivel;
+Queue invariantes_Aho_Corasick(Diccionario raiz) {
+  raiz->prefijoMasLargo = raiz;
+  Diccionario hijo;
   Queue nodosPorNivel = crear_queue();
   for (int i = 0; i < CANT_LETRAS; i++) {
-    nivel = inicio->siguientes[i];
-    if (!diccionario_vacio(nivel)) {
-      nivel->prefijoMasLargo = inicio;
-      queue_push(nodosPorNivel, (void *)nivel);
+    hijo = raiz->siguientes[i];
+    if (!diccionario_vacio(hijo)) {
+      hijo->prefijoMasLargo = raiz;
+      queue_push(&nodosPorNivel, (void *)hijo);
     }
   }
   return nodosPorNivel;
@@ -97,7 +100,8 @@ void encontrar_prefijos_hijos(Diccionario padre, Queue nodosPorNivel) {
     if (!diccionario_vacio(hijo)) {
       letraAsociada = (char)LETRA_QUE_REPRESENTA(i);
       enlazar_prefijo(padre, hijo, letraAsociada);
-      queue_push(nodosPorNivel, (void *)hijo);
+      enlazar_terminal(hijo);
+      queue_push(&nodosPorNivel, (void *)hijo);
     }
   }
 }
@@ -111,7 +115,6 @@ void enlazar_prefijo(Diccionario padre, Diccionario hijo, char letraHijo) {
 
     if (!diccionario_vacio(prefijoAsociado)) {
       hijo->prefijoMasLargo = prefijoAsociado;
-      if (prefijoAsociado->letraFinal == FINAL) hijo->tipoPrefijo = FINAL;
       seEnlazo = 1;
     } else if (padre == padre->prefijoMasLargo) { // Se alcanzó la raiz
       hijo->prefijoMasLargo = padre;
@@ -120,12 +123,26 @@ void enlazar_prefijo(Diccionario padre, Diccionario hijo, char letraHijo) {
   }
 }
 
+void enlazar_terminal(Diccionario nodo) {
+  int seEnlazo = 0;
+  for (Diccionario enlace = nodo->prefijoMasLargo;
+       enlace != enlace->prefijoMasLargo && !seEnlazo;
+       enlace = enlace->prefijoMasLargo) {
+    // Mientras el enlace no sea la raiz y no se haya encontrado el nodo buscado
+    if (enlace->letraFinal == FINAL) {
+      nodo->terminalMasLargo = enlace;
+      seEnlazo = 1;
+    }
+  }
+}
+
 void algoritmo_Aho_Corasick(Diccionario inicio) {
   if (diccionario_vacio(inicio)) return;
   Queue nodosPorNivel = invariantes_Aho_Corasick(inicio);
-  for (Diccionario nodo = queue_top(nodosPorNivel); !queue_vacia(nodosPorNivel);
-       nodo = queue_top(nodosPorNivel)) {
+  Diccionario nodo;
+  do {
+    nodo = queue_top(nodosPorNivel);
     queue_pop(nodosPorNivel);
     encontrar_prefijos_hijos(nodo, nodosPorNivel);
-  }
+  } while (!queue_vacia(nodosPorNivel));
 }

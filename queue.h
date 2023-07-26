@@ -7,6 +7,9 @@
  * estructura "Diccionario".
  */
 
+#ifndef QUEUE_H
+#define QUEUE_H
+
 typedef struct GSList {
   void *dato;
   struct GSList *siguiente;
@@ -53,3 +56,5 @@ void *queue_top(Queue);
  * Elimina el primer elemento de la cola
  */
 void queue_pop(Queue);
+
+#endif

@@ -1,12 +1,13 @@
 #ifndef TRIE_H
 #define TRIE_H
 
+#include "queue.h"
 #include <stdio.h>
-// No se realizará distinción entre mayúsculas y minúsculas
+// No se realizará distinción entre mayúsculas y minúsculas.
 #define CANT_LETRAS 26
-// Numero ascii de la letra minúscula "a"
-#define OFFSET 61
-// Dado un numero entre 0 y 25 retorna el ascii de la letra en dicha posicion
+// Numero ascii de la letra minúscula "a".
+#define OFFSET 97
+// Dado un numero entre 0 y 25 retorna el ascii de la letra en dicha posicion.
 #define LETRA_QUE_REPRESENTA(x) x + OFFSET
 
 typedef enum {
@@ -14,36 +15,38 @@ typedef enum {
   NO_FINAL // Letra no terminal de una palabra
 } tipoEstado;
 
-// Esta estructura será la que permita determinar las palabras válidas de
-// nuestro diccionario
+/**
+ * Esta estructura será la que permita determinar las palabras válidas de
+ * nuestro diccionario.
+ */
 typedef struct AEFND {
   int profundidad;
   tipoEstado letraFinal;
   struct AEFND *siguientes[CANT_LETRAS];
   struct AEFND *prefijoMasLargo;
-  tipoEstado tipoPrefijo;
+  struct AEFND *terminalMasLargo;
 } _Diccionario;
 
 typedef _Diccionario *Diccionario;
 
 /**
- * Retorna un diccionario vacio
+ * Retorna un diccionario vacio.
  */
 Diccionario crear_diccionario();
 
 /**
- * Destruye el diccionario
+ * Destruye el diccionario.
  */
 void destruir_diccionario(Diccionario);
 
 /**
- * Indíca si el diccionario está vacio
+ * Indíca si el diccionario está vacio.
  */
 int diccionario_vacio(Diccionario);
 
 /**
  * Retorna un numero entre 0 y 25 que representa en que posción debe ir la letra
- * para poder encontrar el nodo asociado a esa letra
+ * para poder encontrar el nodo asociado a esa letra.
  */
 int posicion_asociada(char);
 
@@ -55,25 +58,25 @@ Diccionario siguiente_estado(Diccionario, char);
 
 /**
  *Dado un nodo de un diccionario y una letra avanza en el diccionario si existe
- *un nodo siguiente, si no lo crea
+ *un nodo siguiente, si no lo crea.
  */
 Diccionario crear_siguiente_estado(Diccionario, char);
 
 /**
- * Dada una string y un diccionario, agrega la palabra al diccionario
+ * Dada una string y un diccionario, agrega la palabra al diccionario.
  */
 void agregar_palabra(Diccionario *, char *);
 // TODO: Cambiar de char* a FILE*
 
 /**
  * Dado un archivo lee el caracter en el que se encuentra el cursor y si este es
- * una mayúscula retorna su equivalente en minúscula
+ * una mayúscula retorna su equivalente en minúscula.
  */
 char proxima_minuscula(FILE *);
 
 /**
  * Dado un archivo con palabras y un diccionario, agrega todas las palabras al
- * diccionario
+ * diccionario.
  */
 void agregar_archivo(Diccionario *, FILE *);
 
@@ -96,7 +99,7 @@ void encontrar_prefijos_hijos(Diccionario padre, Queue nodosPorNivel);
 
 /**
  * Dado un nodo padre, uno de sus hijos y la letra asociada al hijo, enlaza al
- * hijo al prefijo más largo al que pertenece (exeptuando a la palabra a la que
+ * hijo al prefijo más largo al que pertenece (exceptuando a la palabra a la que
  * pertenece el hijo).
  * En caso de no existir dicho prefijo, enlaza al hijo a la raiz del diccionario
  * al que pertenecen.
@@ -104,7 +107,13 @@ void encontrar_prefijos_hijos(Diccionario padre, Queue nodosPorNivel);
 void enlazar_prefijo(Diccionario padre, Diccionario hijo, char letraHijo);
 
 /**
- * Dado un diccionario aplica el algoritmo Aho-Corasick para arboles trie
+ * Dado un nodo enlazado a su prefijo más largo, la función busca (si existe) un
+ * nodo enlazado que sea final de palabra.
+ */
+void enlazar_terminal(Diccionario);
+
+/**
+ * Dado un diccionario aplica el algoritmo Aho-Corasick para arboles trie.
  */
 void algoritmo_Aho_Corasick(Diccionario);
 

@@ -1,0 +1,5 @@
+*.o
+display_luca.*
+*.txt
+*.exe*
+*.json

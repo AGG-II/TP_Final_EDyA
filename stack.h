@@ -7,6 +7,9 @@
  * estructura "Diccionario".
  */
 
+#ifndef STACK_H
+#define STACK_H
+
 typedef struct GSList {
   void *dato;
   struct GSList *siguiente;
@@ -38,3 +41,5 @@ void *stack_top(Stack);
  * Elimina el primer elemento de la pila
  */
 void stack_pop(Stack *);
+
+#endif
