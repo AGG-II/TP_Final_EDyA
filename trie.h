@@ -1,8 +1,9 @@
+#include "queue.h"
+#include <stdio.h>
+
 #ifndef TRIE_H
 #define TRIE_H
 
-#include "queue.h"
-#include <stdio.h>
 // No se realizará distinción entre mayúsculas y minúsculas.
 #define CANT_LETRAS 26
 // Numero ascii de la letra minúscula "a".
@@ -21,6 +22,7 @@ typedef enum {
  */
 typedef struct AEFND {
   int profundidad;
+  char letraQueRepresenta;
   tipoEstado letraFinal;
   struct AEFND *siguientes[CANT_LETRAS];
   struct AEFND *prefijoMasLargo;
@@ -93,9 +95,15 @@ Queue invariantes_Aho_Corasick(Diccionario);
 /**
  * Dado un nodo padre y una lista de nodos, enlaza mediante el algoritmo
  * Aho-Corasick a todos los hijos del nodo y los agrega a la lista.
+ * Se agregan dos invariantes al algoritmo:
+ * -Los nodos que representan el final de una palabra apuntan a la raiz del
+ * trie.
+ * -Los nodos que representan el final de una palabra no tienen enlace terminal.
+ * La primera invariante evita que los hijos de un final de palabra utilizen el
+ * nodo para formar otra que aparezca más adelante.
  *
  */
-void encontrar_prefijos_hijos(Diccionario padre, Queue nodosPorNivel);
+void encontrar_prefijos_hijos(Diccionario, Diccionario, Queue);
 
 /**
  * Dado un nodo padre, uno de sus hijos y la letra asociada al hijo, enlaza al
@@ -113,7 +121,8 @@ void enlazar_prefijo(Diccionario padre, Diccionario hijo, char letraHijo);
 void enlazar_terminal(Diccionario);
 
 /**
- * Dado un diccionario aplica el algoritmo Aho-Corasick para arboles trie.
+ * Dado un diccionario aplica el algoritmo Aho-Corasick para arboles trie con
+ * dos invariantes adicionales para nuestro caso.
  */
 void algoritmo_Aho_Corasick(Diccionario);
 

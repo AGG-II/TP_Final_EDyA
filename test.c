@@ -1,6 +1,21 @@
+#include "display_luca.c"
+#include "priority_queue.h"
 #include "trie.h"
 #include <stdio.h>
 #include <stdlib.h>
+
+void terminales_aux(Diccionario dic, ColaP cola) {
+  if (dic->terminalMasLargo != NULL) cola_prioridad_push(cola, dic);
+  for (int i = 0; i < CANT_LETRAS; i++) {
+    if (dic->siguientes[i] != NULL) terminales_aux(dic->siguientes[i], cola);
+  }
+}
+
+ColaP todos_links_terminales(Diccionario dic) {
+  ColaP cola = crear_cola_prioridad(1);
+  terminales_aux(dic, cola);
+  return cola;
+}
 
 int main() {
   Diccionario dic = crear_diccionario();
@@ -12,11 +27,12 @@ int main() {
   agregar_palabra(&dic, "Emocion");
   agregar_palabra(&dic, "Alabar");
   algoritmo_Aho_Corasick(dic);
-  destruir_diccionario(dic);
-  FILE *archivo = fopen("hola.txt", "r");
-  dic = crear_diccionario();
-  agregar_archivo(&dic, archivo);
-  algoritmo_Aho_Corasick(dic);
+  print_tree(dic);
+  ColaP cola = todos_links_terminales(dic);
+  for (int i = 1; i <= cola->cantidadElementos; i++) {
+    printf("%d: %c\n", i, cola->elementos[i]->letraQueRepresenta);
+  }
+  cola_prioridad_destruir(cola);
   destruir_diccionario(dic);
   return 0;
 }
