@@ -60,7 +60,7 @@ void cola_prioridad_pop(ColaP heap) {
 void cola_prioridad_aumentar_capacidad(ColaP heap, int nuevaCapacidad) {
   Diccionario *elems = heap->elementos;
   heap->capacidad = nuevaCapacidad;
-  heap->elementos = realloc(elems, nuevaCapacidad);
+  heap->elementos = realloc(elems, sizeof(Diccionario) * (nuevaCapacidad + 1));
 }
 
 void cola_prioridad_push(ColaP heap, Diccionario nodo) {

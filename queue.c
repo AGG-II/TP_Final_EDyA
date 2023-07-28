@@ -47,3 +47,10 @@ void queue_pop(Queue cola) {
   cola->inicio = nodoEliminar->siguiente;
   free(nodoEliminar);
 }
+
+void queue_destruir(Queue cola) {
+  while (!queue_vacia(cola)) {
+    queue_pop(cola);
+  }
+  free(cola);
+}

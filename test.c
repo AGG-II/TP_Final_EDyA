@@ -20,6 +20,7 @@ ColaP todos_links_terminales(Diccionario dic) {
 int main() {
   Diccionario dic = crear_diccionario();
   agregar_palabra(&dic, "Remesurar");
+  agregar_palabra(&dic, "hermesurar");
   agregar_palabra(&dic, "A");
   agregar_palabra(&dic, "La");
   agregar_palabra(&dic, "Alah");
@@ -32,7 +33,7 @@ int main() {
   for (int i = 1; i <= cola->cantidadElementos; i++) {
     printf("%d: %c\n", i, cola->elementos[i]->letraQueRepresenta);
   }
-  cola_prioridad_destruir(cola);
   destruir_diccionario(dic);
+  cola_prioridad_destruir(cola);
   return 0;
 }

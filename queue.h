@@ -23,38 +23,43 @@ typedef struct _Queue {
 } *Queue;
 
 /**
- * Determina si la cola esta inicializada
+ * Determina si la cola esta inicializada.
  */
 int queue_nulo(Queue);
 
 /**
- * Determina si la cola dada está vacía
+ * Determina si la cola dada está vacía.
  */
 int queue_vacia(Queue);
 
 /**
- * Crea un nodo de la cola
+ * Crea un nodo de la cola.
  */
 NodoCola crear_nodo(void *);
 
 /**
- * Crea una cola vacia
+ * Crea una cola vacia.
  */
 Queue crear_queue();
 
 /**
- * Inserta un nuevo elemento en la cola
+ * Inserta un nuevo elemento en la cola.
  */
 void queue_push(Queue *, void *);
 
 /**
- * Retorna el primer elemento de la cola
+ * Retorna el primer elemento de la cola.
  */
 void *queue_top(Queue);
 
 /**
- * Elimina el primer elemento de la cola
+ * Elimina el primer elemento de la cola.
  */
 void queue_pop(Queue);
+
+/**
+ * Destruye la cola.
+ */
+void queue_destruir(Queue);
 
 #endif

@@ -133,4 +133,5 @@ void algoritmo_Aho_Corasick(Diccionario inicio) {
     queue_pop(nodosPorNivel);
     encontrar_prefijos_hijos(nodo, inicio, nodosPorNivel);
   } while (!queue_vacia(nodosPorNivel));
+  queue_destruir(nodosPorNivel);
 }
