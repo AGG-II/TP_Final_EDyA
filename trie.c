@@ -1,5 +1,5 @@
 #include "trie.h"
-#include "queue.h"
+#include "queue/queue.h"
 #include <ctype.h>
 #include <stdlib.h>
 
@@ -7,7 +7,7 @@ Diccionario crear_diccionario() {
   Diccionario vacio = calloc(1, sizeof(_Diccionario));
   vacio->profundidad = 0; // redundante
   vacio->letraFinal = NO_FINAL;
-  vacio->terminalMasLargo = NULL;
+  vacio->enlaceTerminal = NULL;
   return vacio;
 }
 
@@ -61,13 +61,14 @@ void agregar_palabra(Diccionario *inicio, char *palabra) {
 char proxima_minuscula(FILE *fuente) { return tolower(fgetc(fuente)); }
 
 Queue invariantes_Aho_Corasick(Diccionario raiz) {
-  raiz->prefijoMasLargo = raiz;
+  raiz->enlaceFallo = raiz;
   Diccionario hijo;
-  Queue nodosPorNivel = crear_queue();
+  Queue nodosPorNivel = crear_queue(CANT_LETRAS);
   for (int i = 0; i < CANT_LETRAS; i++) {
+    // todos los hijo tienen como link de
     hijo = raiz->siguientes[i];
     if (!diccionario_vacio(hijo)) {
-      hijo->prefijoMasLargo = raiz;
+      hijo->enlaceFallo = raiz;
       queue_push(&nodosPorNivel, (void *)hijo);
     }
   }
@@ -83,7 +84,7 @@ void encontrar_prefijos_hijos(Diccionario padre, Diccionario raiz,
     if (!diccionario_vacio(hijo)) {
       letraAsociada = (char)LETRA_QUE_REPRESENTA(i);
       if (hijo->letraFinal == FINAL) { // invariante extra
-        hijo->prefijoMasLargo = raiz;
+        hijo->enlaceFallo = raiz;
       } else {
         enlazar_prefijo(padre, hijo, letraAsociada);
         enlazar_terminal(hijo);
@@ -97,14 +98,14 @@ void enlazar_prefijo(Diccionario padre, Diccionario hijo, char letraHijo) {
   int seEnlazo = 0;
   Diccionario prefijoAsociado;
   while (!seEnlazo) {
-    padre = padre->prefijoMasLargo;
+    padre = padre->enlaceFallo;
     prefijoAsociado = siguiente_estado(padre, letraHijo);
 
     if (!diccionario_vacio(prefijoAsociado)) {
-      hijo->prefijoMasLargo = prefijoAsociado;
+      hijo->enlaceFallo = prefijoAsociado;
       seEnlazo = 1;
-    } else if (padre == padre->prefijoMasLargo) { // Se alcanzó la raiz
-      hijo->prefijoMasLargo = padre;
+    } else if (padre == padre->enlaceFallo) { // Se alcanzó la raiz
+      hijo->enlaceFallo = padre;
       seEnlazo = 1;
     }
   }
@@ -113,12 +114,12 @@ void enlazar_prefijo(Diccionario padre, Diccionario hijo, char letraHijo) {
 void enlazar_terminal(Diccionario nodo) {
   if (nodo->letraFinal == FINAL) return; // El enlace no es necesario
   int seEnlazo = 0;
-  for (Diccionario enlace = nodo->prefijoMasLargo;
-       enlace != enlace->prefijoMasLargo && !seEnlazo;
-       enlace = enlace->prefijoMasLargo) {
+  for (Diccionario enlace = nodo->enlaceFallo;
+       enlace != enlace->enlaceFallo && !seEnlazo;
+       enlace = enlace->enlaceFallo) {
     // Mientras el enlace no sea la raiz y no se haya encontrado el nodo buscado
     if (enlace->letraFinal == FINAL) {
-      nodo->terminalMasLargo = enlace;
+      nodo->enlaceTerminal = enlace;
       seEnlazo = 1;
     }
   }

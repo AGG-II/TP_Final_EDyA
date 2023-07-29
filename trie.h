@@ -1,4 +1,4 @@
-#include "queue.h"
+#include "queue/queue.h"
 #include <stdio.h>
 
 #ifndef TRIE_H
@@ -12,8 +12,8 @@
 #define LETRA_QUE_REPRESENTA(x) x + OFFSET
 
 typedef enum {
-  FINAL,   // Letra final de una palabra
-  NO_FINAL // Letra no terminal de una palabra
+  NO_FINAL, // Letra no terminal de una palabra
+  FINAL     // Letra final de una palabra
 } tipoEstado;
 
 /**
@@ -25,8 +25,8 @@ typedef struct AEFND {
   char letraQueRepresenta;
   tipoEstado letraFinal;
   struct AEFND *siguientes[CANT_LETRAS];
-  struct AEFND *prefijoMasLargo;
-  struct AEFND *terminalMasLargo;
+  struct AEFND *enlaceFallo;
+  struct AEFND *enlaceTerminal;
 } _Diccionario;
 
 typedef _Diccionario *Diccionario;

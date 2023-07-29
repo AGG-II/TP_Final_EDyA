@@ -9,7 +9,7 @@ test.o: test.c trie.h queue.o
 trie.o: trie.c trie.h queue.o
 	$(CC) -c $< $(FLAGS)
 
-queue.o: queue.c queue.h
+queue.o: queue/queue.c queue/queue.h
 	$(CC) -c $< $(FLAGS)
 
 priority_queue.o: priority_queue.c priority_queue.h trie.h

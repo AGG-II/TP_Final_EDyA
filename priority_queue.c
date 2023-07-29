@@ -27,7 +27,7 @@ int comparar_prioridades(Diccionario izquierda, Diccionario derecha) {
 }
 
 int posicion_primera_letra(Diccionario nodo) {
-  Diccionario ultLetraTerminal = nodo->terminalMasLargo;
+  Diccionario ultLetraTerminal = nodo->enlaceTerminal;
   int longPalTerminal = ultLetraTerminal->profundidad;
   int profSubcadena = nodo->profundidad;
   return profSubcadena - longPalTerminal + 1;
