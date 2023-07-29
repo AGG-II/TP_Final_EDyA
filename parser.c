@@ -1,6 +1,7 @@
-#include "trie.h"
+#include "parser.h"
 #include <ctype.h>
-#include <stdio.h>
+
+char proxima_minuscula(FILE *fuente) { return tolower(fgetc(fuente)); }
 
 void agregar_archivo(Diccionario *inicio, FILE *fuente) {
   Diccionario posicionActual = *inicio;

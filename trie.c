@@ -1,5 +1,4 @@
 #include "trie.h"
-#include "queue/queue.h"
 #include <ctype.h>
 #include <stdlib.h>
 
@@ -13,7 +12,7 @@ Diccionario crear_diccionario() {
 
 void destruir_diccionario(Diccionario destruir) {
   for (int i = 0; i < CANT_LETRAS; i++) {
-    if (!diccionario_vacio(destruir))
+    if (!diccionario_vacio(destruir->siguientes[i]))
       destruir_diccionario(destruir->siguientes[i]);
   }
   free(destruir);
@@ -57,8 +56,6 @@ void agregar_palabra(Diccionario *inicio, char *palabra) {
   }
   recorredor->letraFinal = FINAL;
 }
-
-char proxima_minuscula(FILE *fuente) { return tolower(fgetc(fuente)); }
 
 Queue invariantes_Aho_Corasick(Diccionario raiz) {
   raiz->enlaceFallo = raiz;
@@ -135,4 +132,21 @@ void algoritmo_Aho_Corasick(Diccionario inicio) {
     encontrar_prefijos_hijos(nodo, inicio, nodosPorNivel);
   } while (!queue_vacia(nodosPorNivel));
   queue_destruir(nodosPorNivel);
+}
+
+char proxima_minuscula(FILE *fuente) { return tolower(fgetc(fuente)); }
+
+void agregar_archivo(Diccionario *inicio, FILE *fuente) {
+  Diccionario posicionActual = *inicio;
+  for (char letraActual = proxima_minuscula(fuente); letraActual != EOF;
+       letraActual = proxima_minuscula(fuente)) {
+
+    if (isalpha(letraActual)) {
+      posicionActual = crear_siguiente_estado(posicionActual, letraActual);
+    } else if (letraActual == '\n') {
+      posicionActual->letraFinal = FINAL;
+      posicionActual = *inicio;
+    }
+  }
+  posicionActual->letraFinal = FINAL;
 }

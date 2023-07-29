@@ -3,10 +3,11 @@
  * para guardar nodos de la estructura "Diccionario" que poseean un enlace
  * terminal.
  */
-#include "trie.h"
 
 #ifndef P_QUEUE_H
 #define P_QUEUE_H
+
+#include "trie.h"
 
 typedef struct {
   int capacidad;

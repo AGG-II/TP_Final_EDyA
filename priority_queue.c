@@ -1,5 +1,4 @@
 #include "priority_queue.h"
-#include "trie.h"
 #include <stdlib.h>
 
 ColaP crear_cola_prioridad(int cantidad) {
