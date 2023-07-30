@@ -1,32 +1,53 @@
 #ifndef PARSER_H
 #define PARSER_H
 
+#include "priority_queue.h"
 #include "trie.h"
 #include <stdio.h>
 
+#define BUFFER 1001 // Logitud máxima de una oración
+
 typedef struct {
   Diccionario palabras;
+  ColaP enlacesTerminales;
 } _Parser;
 
-/**
- * Dado un archivo lee el caracter en el que se encuentra el cursor y si
- * este es una mayúscula retorna su equivalente en minúscula.
- */
-char proxima_minuscula(FILE *);
+typedef _Parser *Parser;
 
 /**
- * Dado un archivo con palabras y un diccionario, agrega todas las palabras al
- * diccionario.
+ * Crea un parser.
  */
-void agregar_archivo(Diccionario *, FILE *);
+Parser parser_crear();
 
 /**
- * Dado un diccionario establece las invariantes del algoritmo Aho-Corasick
- * Invariantes:
- *  -La raiz del trie se apunta a si mismo
- *  -Los hijos inmediatos de la raiz apuntan a la raiz
- * La función retorna una cola con todos los hijos de la raiz para poder seguir
- * aplicando el algoritmo.
+ * Destruye el parser.
  */
+void parser_destruir(Parser);
+
+/**
+ * Determina si el parser dado es nulo.
+ */
+int parser_nulo(Parser);
+
+/**
+ * Dado un archivo con palabras las agrega al Diccionario del parser y aplica el
+ * algoritmo Aho-Corasick.
+ */
+void parser_cargar_archivo(Parser *, FILE *);
+
+/**
+ * Dado un archivo carga toda la oración en donde se encuentra el cursor hasta
+ * el final de la linea.
+ * La función retorna != 0 si pudo cargar la linea.
+ * En caso contrario retorna 0.
+ */
+int obtener_oracion(FILE *, char *);
+
+/**
+ * Dado un parser cargado con un diccionario, un archivo con oraciones y el
+ * nombre del archivo a crear. Crea un nuevo archivo con las oraciones
+ * corregidas.
+ */
+void parser_corregir(FILE *, Parser, const char *);
 
 #endif

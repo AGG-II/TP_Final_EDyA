@@ -2,7 +2,7 @@
 #include <ctype.h>
 #include <stdlib.h>
 
-Diccionario crear_diccionario() {
+Diccionario diccionario_crear() {
   Diccionario vacio = calloc(1, sizeof(_Diccionario));
   vacio->profundidad = 0; // redundante
   vacio->letraFinal = NO_FINAL;
@@ -10,10 +10,10 @@ Diccionario crear_diccionario() {
   return vacio;
 }
 
-void destruir_diccionario(Diccionario destruir) {
+void diccionario_destruir(Diccionario destruir) {
   for (int i = 0; i < CANT_LETRAS; i++) {
     if (!diccionario_vacio(destruir->siguientes[i]))
-      destruir_diccionario(destruir->siguientes[i]);
+      diccionario_destruir(destruir->siguientes[i]);
   }
   free(destruir);
 }
@@ -32,9 +32,8 @@ Diccionario crear_siguiente_estado(Diccionario posicionActual, char letra) {
 
   if (diccionario_vacio(nodoSiguiente)) { // si el estado no existe
     int numeroAsociado = posicion_asociada(letra);
-    nodoSiguiente = crear_diccionario();
+    nodoSiguiente = diccionario_crear();
     nodoSiguiente->profundidad = posicionActual->profundidad + 1;
-    nodoSiguiente->letraQueRepresenta = letra;
     posicionActual->siguientes[numeroAsociado] = nodoSiguiente;
   }
   return nodoSiguiente;
@@ -42,11 +41,11 @@ Diccionario crear_siguiente_estado(Diccionario posicionActual, char letra) {
 
 // La funcion asume que la variable palabra solo contiene caracteres de la A
 // hasta la Z tanto en minúscula como en mayúscula
-void agregar_palabra(Diccionario *inicio, char *palabra) {
+void diccionario_agregar_palabra(Diccionario *inicio, char *palabra) {
 
   // Aseguramos que exista la posición
   if (diccionario_vacio(*inicio)) {
-    *inicio = crear_diccionario();
+    *inicio = diccionario_crear();
   }
 
   Diccionario recorredor = *inicio;
@@ -57,10 +56,25 @@ void agregar_palabra(Diccionario *inicio, char *palabra) {
   recorredor->letraFinal = FINAL;
 }
 
+void dicionario_agregar_archivo(Diccionario *inicio, FILE *fuente) {
+  Diccionario posicionActual = *inicio;
+  for (char letraActual = fgetc(fuente); letraActual != EOF;
+       letraActual = fgetc(fuente)) {
+
+    if (isalpha(letraActual)) {
+      posicionActual = crear_siguiente_estado(posicionActual, letraActual);
+    } else if (letraActual == '\n') {
+      posicionActual->letraFinal = FINAL;
+      posicionActual = *inicio;
+    }
+  }
+  posicionActual->letraFinal = FINAL;
+}
+
 Queue invariantes_Aho_Corasick(Diccionario raiz) {
   raiz->enlaceFallo = raiz;
   Diccionario hijo;
-  Queue nodosPorNivel = crear_queue(CANT_LETRAS);
+  Queue nodosPorNivel = queue_crear(CANT_LETRAS);
   for (int i = 0; i < CANT_LETRAS; i++) {
     // todos los hijo tienen como link de
     hijo = raiz->siguientes[i];
@@ -122,7 +136,7 @@ void enlazar_terminal(Diccionario nodo) {
   }
 }
 
-void algoritmo_Aho_Corasick(Diccionario inicio) {
+void diccionario_algoritmo_Aho_Corasick(Diccionario inicio) {
   if (diccionario_vacio(inicio)) return;
   Queue nodosPorNivel = invariantes_Aho_Corasick(inicio);
   Diccionario nodo;
@@ -132,21 +146,4 @@ void algoritmo_Aho_Corasick(Diccionario inicio) {
     encontrar_prefijos_hijos(nodo, inicio, nodosPorNivel);
   } while (!queue_vacia(nodosPorNivel));
   queue_destruir(nodosPorNivel);
-}
-
-char proxima_minuscula(FILE *fuente) { return tolower(fgetc(fuente)); }
-
-void agregar_archivo(Diccionario *inicio, FILE *fuente) {
-  Diccionario posicionActual = *inicio;
-  for (char letraActual = proxima_minuscula(fuente); letraActual != EOF;
-       letraActual = proxima_minuscula(fuente)) {
-
-    if (isalpha(letraActual)) {
-      posicionActual = crear_siguiente_estado(posicionActual, letraActual);
-    } else if (letraActual == '\n') {
-      posicionActual->letraFinal = FINAL;
-      posicionActual = *inicio;
-    }
-  }
-  posicionActual->letraFinal = FINAL;
 }

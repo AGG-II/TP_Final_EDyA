@@ -20,7 +20,7 @@ typedef _Priority *ColaP;
 /**
  * Crea una cola de prioridad de la longitud dada.
  */
-ColaP crear_cola_prioridad(int);
+ColaP cola_prioridad_crear(unsigned int);
 
 /**
  * Determina si la cola de prioridad esta vacia

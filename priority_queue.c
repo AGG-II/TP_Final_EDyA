@@ -1,7 +1,8 @@
 #include "priority_queue.h"
 #include <stdlib.h>
 
-ColaP crear_cola_prioridad(int cantidad) {
+ColaP cola_prioridad_crear(unsigned int cantidad) {
+  if (cantidad == 0) cantidad = 1;
   ColaP retorno = malloc(sizeof(_Priority));
   retorno->elementos = malloc(sizeof(Diccionario) * (cantidad + 1));
   retorno->elementos[0] = NULL;
@@ -66,7 +67,7 @@ void cola_prioridad_push(ColaP heap, Diccionario nodo) {
   int cantElem = heap->cantidadElementos;
   int capacidad = heap->capacidad;
   if (cantElem == capacidad) { // si el heap esta lleno
-    capacidad = capacidad == 0 ? 1 : (capacidad * 2);
+    capacidad *= 2;
     cola_prioridad_aumentar_capacidad(heap, capacidad);
   }
   Diccionario *elems = heap->elementos, t;

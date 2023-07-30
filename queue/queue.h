@@ -7,17 +7,19 @@
  * estructura "Diccionario".
  */
 
-#ifndef QUEUE_ARRAY_H
-#define QUEUE_ARRAY_H
+#ifndef QUEUE_H
+#define QUEUE_H
 
-typedef enum { LLENA, VACIA, CARGADA } Estado;
+typedef struct GSList {
+  void *dato;
+  struct GSList *siguiente;
+} _Cola;
+
+typedef _Cola *NodoCola;
 
 typedef struct _Queue {
-  int inicio;
-  int final; // contiene el indice del lugar libre a ocupar
-  int capacidad;
-  void **elementos;
-  Estado estado;
+  NodoCola inicio;
+  NodoCola final;
 } *Queue;
 
 /**
@@ -31,21 +33,14 @@ int queue_nulo(Queue);
 int queue_vacia(Queue);
 
 /**
- * Crea una cola vacia con capacidad para almenos un elemento.
+ * Crea un nodo de la cola.
  */
-Queue crear_queue(unsigned int);
+NodoCola crear_nodo(void *);
 
 /**
- * Dada una cola duplica su capacidad.
- * Crea un array nuevo con el doble de espacio y coloca los elementos al
- * principio de la cola empezando por le tope.
+ * Crea una cola vacia.
  */
-void duplicar_capacidad(Queue);
-
-/**
- * Dada una posicion de la cola retorna la posicion siguiente.
- */
-int siguiente_posicion(Queue cola, int posicion);
+Queue queue_crear();
 
 /**
  * Inserta un nuevo elemento en la cola.
@@ -53,23 +48,7 @@ int siguiente_posicion(Queue cola, int posicion);
 void queue_push(Queue *, void *);
 
 /**
- * Agrega un elemento al final de una cola vacia.
- */
-void agregar_vacia(Queue, void *);
-
-/**
- * Duplica la capacidad de la cola llena dada y agrega el dato dado al final.
- */
-void agregar_llena(Queue, void *);
-
-/**
- * Agrega un elemento al final de una cola con elementos.
- */
-void agregar_cargada(Queue, void *);
-
-/**
  * Retorna el primer elemento de la cola.
- * Si la cola esta vacia retorna NULL.
  */
 void *queue_top(Queue);
 

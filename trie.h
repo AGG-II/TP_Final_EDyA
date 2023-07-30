@@ -23,7 +23,6 @@ typedef enum {
  */
 typedef struct AEFND {
   int profundidad;
-  char letraQueRepresenta;
   tipoEstado letraFinal;
   struct AEFND *siguientes[CANT_LETRAS];
   struct AEFND *enlaceFallo;
@@ -35,12 +34,12 @@ typedef _Diccionario *Diccionario;
 /**
  * Retorna un diccionario vacio.
  */
-Diccionario crear_diccionario();
+Diccionario diccionario_crear();
 
 /**
  * Destruye el diccionario.
  */
-void destruir_diccionario(Diccionario);
+void diccionario_destruir(Diccionario);
 
 /**
  * Indíca si el diccionario está vacio.
@@ -50,6 +49,7 @@ int diccionario_vacio(Diccionario);
 /**
  * Retorna un numero entre 0 y 25 que representa en que posción debe ir la letra
  * para poder encontrar el nodo asociado a esa letra.
+ * No es realiza ddistincion entre minúsculas y mayúsculas
  */
 int posicion_asociada(char);
 
@@ -68,8 +68,13 @@ Diccionario crear_siguiente_estado(Diccionario, char);
 /**
  * Dada una string y un diccionario, agrega la palabra al diccionario.
  */
-void agregar_palabra(Diccionario *, char *);
-// TODO: Cambiar de char* a FILE*
+void diccionario_agregar_palabra(Diccionario *, char *);
+
+/**
+ * Dado un archivo con palabras y un diccionario, agrega todas las palabras al
+ * diccionario.
+ */
+void diccionario_agregar_archivo(Diccionario *, FILE *);
 
 Queue invariantes_Aho_Corasick(Diccionario);
 
@@ -105,8 +110,6 @@ void enlazar_terminal(Diccionario);
  * Dado un diccionario aplica el algoritmo Aho-Corasick para arboles trie con
  * dos invariantes adicionales para nuestro caso.
  */
-void algoritmo_Aho_Corasick(Diccionario);
+void diccionario_algoritmo_Aho_Corasick(Diccionario);
 
-char proxima_minuscula(FILE *);
-void agregar_archivo(Diccionario *, FILE *);
 #endif
