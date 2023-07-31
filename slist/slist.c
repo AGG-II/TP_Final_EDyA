@@ -1,7 +1,9 @@
 #include "slist.h"
 #include <stdlib.h>
 
-int slist_vacio(SList lista) { return lista->inicio == NULL; }
+int slist_vacio(SList lista) {
+  return lista->inicio == NULL && lista->final == NULL;
+}
 
 SList slist_crear() {
   SList vacio = malloc(sizeof(Lista));
@@ -11,8 +13,6 @@ SList slist_crear() {
 }
 
 void agregar_lista_vacia(SList lista, Nodo nuevoNodo) {
-  nuevoNodo->previo = NULL;
-  nuevoNodo->siguiente = NULL;
   lista->inicio = nuevoNodo;
   lista->final = nuevoNodo;
 }
@@ -20,7 +20,12 @@ void agregar_lista_vacia(SList lista, Nodo nuevoNodo) {
 void slist_push_top(SList lista, void *dato) {
   Nodo nuevoNodo = malloc(sizeof(Nodo));
   nuevoNodo->dato = dato;
-  if (slist_vacio(lista)) agregar_lista_vacia(lista, nuevoNodo);
+  nuevoNodo->previo = NULL;
+  nuevoNodo->siguiente = NULL;
+  if (slist_vacio(lista)) {
+    agregar_lista_vacia(lista, nuevoNodo);
+    return;
+  }
 
   nuevoNodo->siguiente = lista->inicio;
   lista->inicio->previo = nuevoNodo;
@@ -30,7 +35,13 @@ void slist_push_top(SList lista, void *dato) {
 void slist_push_bottom(SList lista, void *dato) {
   Nodo nuevoNodo = malloc(sizeof(Nodo));
   nuevoNodo->dato = dato;
-  if (slist_vacio(lista)) agregar_lista_vacia(lista, nuevoNodo);
+  nuevoNodo->previo = NULL;
+  nuevoNodo->siguiente = NULL;
+  if (slist_vacio(lista)) {
+    agregar_lista_vacia(lista, nuevoNodo);
+    return;
+  }
+
   nuevoNodo->previo = lista->final;
   lista->final->siguiente = nuevoNodo;
   lista->final = nuevoNodo;
@@ -50,7 +61,10 @@ void slist_pop_top(SList lista, FuncionDestructora destroy) {
   if (slist_vacio(lista)) return;
   Nodo nodoEliminar = lista->inicio;
   lista->inicio = nodoEliminar->siguiente;
-  if (nodoEliminar == lista->final) lista->final = NULL;
+  if (nodoEliminar == lista->final)
+    lista->final = NULL;
+  else
+    lista->inicio->previo = NULL;
   destroy(nodoEliminar->dato);
   free(nodoEliminar);
 }
@@ -59,7 +73,10 @@ void slist_pop_bottom(SList lista, FuncionDestructora destroy) {
   if (slist_vacio(lista)) return;
   Nodo nodoEliminar = lista->final;
   lista->final = nodoEliminar->previo;
-  if (nodoEliminar == lista->inicio) lista->inicio = NULL;
+  if (nodoEliminar == lista->inicio) // La lista tenia un solo elemento
+    lista->inicio = NULL;
+  else
+    lista->final->siguiente = NULL;
   destroy(nodoEliminar->dato);
   free(nodoEliminar);
 }

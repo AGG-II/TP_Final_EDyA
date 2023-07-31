@@ -3,7 +3,7 @@
 #define PARSER_H
 
 #include "intervalo.h"
-#include "slist.h"
+#include "slist/slist.h"
 #include "trie.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -89,6 +89,12 @@ int cargar_string(Intervalo, char *, int, char *);
  * obatenidos del procesamiento.
  */
 void cargar_resultados(SList, char *, FILE *);
+
+/**
+ * Dada una string con un espacio al final o una string vacia coloca el fin de
+ * caracter sobre el espacio.
+ */
+void colocar_terminador(char *, int);
 
 /**
  * Carga las palabras y errores en el archivo

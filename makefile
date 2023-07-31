@@ -15,7 +15,7 @@ trie.o: trie.c trie.h queue.o
 queue.o: queue/queue.c queue/queue.h
 	$(CC) -c $< $(FLAGS)
 
-slist.o: slist.c slist.h
+slist.o: slist/slist.c slist/slist.h
 	$(CC) -c $< $(FLAGS)
 
 intervalo.o: intervalo.c intervalo.h

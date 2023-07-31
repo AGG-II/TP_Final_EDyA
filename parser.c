@@ -18,6 +18,12 @@ void parser_cargar_archivo(Parser *par, FILE *fuente) {
 
 int obtener_oracion(FILE *fuente, char *destino) {
   char *resultado = fgets(destino, sizeof(char) * BUFFER, fuente);
+  int i = 0;
+  if (resultado != NULL) {
+    for (; resultado[i] != '\r' && resultado[i] != '\0'; i++)
+      ;
+    if (resultado[i] == '\r') resultado[i] = '\0';
+  }
   return resultado != NULL;
 }
 
@@ -104,12 +110,11 @@ int cargar_string(Intervalo extremos, char *fuente, int offset, char *destino) {
     destino[offset + i] = fuente[inicio + i];
   }
   destino[offset + i] = ' ';
-  return i + 1;
+  return i;
 }
 
 void cargar_resultados(SList intervalosValidos, char *oracion, FILE *destino) {
-  int ultPosLeida = 0;
-  int posErrores = 0, posAciertos = 0;
+  int ultPosLeida = 0, posErrores = 0, posAciertos = 0;
   int longitudOracion = strlen(oracion);
   char *aciertos = malloc(sizeof(char) * 2 * longitudOracion);
   char *errores = malloc(sizeof(char) * 2 * longitudOracion);
@@ -118,32 +123,41 @@ void cargar_resultados(SList intervalosValidos, char *oracion, FILE *destino) {
     Intervalo palabra = slist_bottom(intervalosValidos);
     error->inicio = ultPosLeida;
     error->final = palabra->inicio - 1;
+
     if (error->final >= error->inicio) // si hay un error para cargar
-      posErrores += cargar_string(error, oracion, posErrores, errores);
-    posAciertos += cargar_string(palabra, oracion, posAciertos, aciertos);
+      posErrores += cargar_string(error, oracion, posErrores, errores) + 1;
+    posAciertos += cargar_string(palabra, oracion, posAciertos, aciertos) + 1;
     ultPosLeida = palabra->final + 1;
     slist_pop_bottom(intervalosValidos, (FuncionDestructora)intervalo_destruir);
   }
+
   // cargamos el resto como error
   error->inicio = ultPosLeida;
   error->final = longitudOracion;
-  // Si hay un error
+  // Cargamos el resto de la oracion como error
   if (error->inicio < error->final)
-    posErrores += cargar_string(error, oracion, posErrores, errores);
-  // Reemplazamos el ultimo espacio puesto con un terminador.
-  errores[--posErrores] = '\0';
-  aciertos[--posAciertos] = '\0';
+    posErrores += cargar_string(error, oracion, posErrores, errores) + 1;
+  colocar_terminador(aciertos, posAciertos);
+  colocar_terminador(errores, posErrores);
   cargar_oraciones(aciertos, errores, destino);
+  slist_destruir(intervalosValidos, (FuncionDestructora)intervalo_destruir);
   free(aciertos);
   free(errores);
 }
 
+void colocar_terminador(char *cadena, int longitud) {
+  // Reemplazamos el ultimo espacio puesto con un terminador.
+  longitud = POSICION_TERMINADOR(longitud);
+  cadena[longitud] = '\0';
+}
+
 void cargar_oraciones(char *aciertos, char *errores, FILE *destino) {
-  if (errores[0] == '\0') // no hay errores
-    fprintf(destino,
-            "La oracion es: \"%s\". No se necesito recuperar de errores.\n",
-            aciertos);
+  if (aciertos[0] != '\0') // Hay palabras correctas
+    fprintf(destino, "La oracion es: \"%s\". ", aciertos);
   else
-    fprintf(destino, "La oracion es: \"%s\". Los errores fueron: \"%s\".\n",
-            aciertos, errores);
+    fprintf(destino, "No hay palabras correctas. ");
+  if (errores[0] == '\0') // no hay errores
+    fprintf(destino, "No se necesito recuperar de errores.\n");
+  else
+    fprintf(destino, "Los errores fueron: \"%s\".\n", errores);
 }

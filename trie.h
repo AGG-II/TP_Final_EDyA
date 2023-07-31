@@ -11,6 +11,8 @@
 #define OFFSET 97
 // Dado un numero entre 0 y 25 retorna el ascii de la letra en dicha posicion.
 #define LETRA_QUE_REPRESENTA(x) x + OFFSET
+// Si no se ingresaron palabras entonces la posicion inicial es la final
+#define POSICION_TERMINADOR(x) x == 0 ? 0 : x - 1
 
 typedef enum {
   NO_FINAL, // Letra no terminal de una palabra
@@ -98,7 +100,7 @@ void encontrar_prefijos_hijos(Diccionario, Diccionario, Queue);
  * En caso de no existir dicho prefijo, enlaza al hijo a la raiz del diccionario
  * al que pertenecen.
  */
-void enlazar_prefijo(Diccionario padre, Diccionario hijo, char letraHijo);
+void enlazar_prefijo(Diccionario, Diccionario, char);
 
 /**
  * Dado un nodo enlazado a su prefijo más largo, la función busca (si existe) un
