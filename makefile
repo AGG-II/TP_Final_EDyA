@@ -1,9 +1,12 @@
 FLAGS = -Wall -Wextra -Werror -std=c99 -g
 
-programa: test.o trie.o queue.o priority_queue.o
+programa: test.o parser.o trie.o queue.o slist.o intervalo.o
 	$(CC) -o $@ $^ $(FLAGS)
 
-test.o: test.c trie.h queue.o
+test.o: test.c parser.o queue.o trie.o
+	$(CC) -c $< $(FLAGS)
+
+parser.o: parser.c parser.h trie.o slist.o queue.o intervalo.o
 	$(CC) -c $< $(FLAGS)
 
 trie.o: trie.c trie.h queue.o
@@ -12,7 +15,10 @@ trie.o: trie.c trie.h queue.o
 queue.o: queue/queue.c queue/queue.h
 	$(CC) -c $< $(FLAGS)
 
-priority_queue.o: priority_queue.c priority_queue.h trie.h
+slist.o: slist.c slist.h
+	$(CC) -c $< $(FLAGS)
+
+intervalo.o: intervalo.c intervalo.h
 	$(CC) -c $< $(FLAGS)
 
 clean:

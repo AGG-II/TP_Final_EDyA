@@ -22,13 +22,14 @@ int diccionario_vacio(Diccionario inicio) { return inicio == NULL; }
 
 int posicion_asociada(char letra) { return tolower(letra) - OFFSET; }
 
-Diccionario siguiente_estado(Diccionario letraActual, char letra) {
+Diccionario diccionario_siguiente_estado(Diccionario letraActual, char letra) {
   int numeroAsociado = posicion_asociada(letra);
   return letraActual->siguientes[numeroAsociado];
 }
 
 Diccionario crear_siguiente_estado(Diccionario posicionActual, char letra) {
-  Diccionario nodoSiguiente = siguiente_estado(posicionActual, letra);
+  Diccionario nodoSiguiente =
+      diccionario_siguiente_estado(posicionActual, letra);
 
   if (diccionario_vacio(nodoSiguiente)) { // si el estado no existe
     int numeroAsociado = posicion_asociada(letra);
@@ -56,7 +57,7 @@ void diccionario_agregar_palabra(Diccionario *inicio, char *palabra) {
   recorredor->letraFinal = FINAL;
 }
 
-void dicionario_agregar_archivo(Diccionario *inicio, FILE *fuente) {
+void diccionario_agregar_archivo(Diccionario *inicio, FILE *fuente) {
   Diccionario posicionActual = *inicio;
   for (char letraActual = fgetc(fuente); letraActual != EOF;
        letraActual = fgetc(fuente)) {
@@ -110,7 +111,7 @@ void enlazar_prefijo(Diccionario padre, Diccionario hijo, char letraHijo) {
   Diccionario prefijoAsociado;
   while (!seEnlazo) {
     padre = padre->enlaceFallo;
-    prefijoAsociado = siguiente_estado(padre, letraHijo);
+    prefijoAsociado = diccionario_siguiente_estado(padre, letraHijo);
 
     if (!diccionario_vacio(prefijoAsociado)) {
       hijo->enlaceFallo = prefijoAsociado;

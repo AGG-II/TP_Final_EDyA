@@ -57,7 +57,7 @@ int posicion_asociada(char);
  * Dada una letra y un nodo del diccionario, retorna un puntero al nodo a las
  * siguientes letras posibles si existen. Si no retorna NULL.
  */
-Diccionario siguiente_estado(Diccionario, char);
+Diccionario diccionario_siguiente_estado(Diccionario, char);
 
 /**
  *Dado un nodo de un diccionario y una letra avanza en el diccionario si existe
@@ -108,7 +108,7 @@ void enlazar_terminal(Diccionario);
 
 /**
  * Dado un diccionario aplica el algoritmo Aho-Corasick para arboles trie con
- * dos invariantes adicionales para nuestro caso.
+ * una invariate adicional para nuestro caso.
  */
 void diccionario_algoritmo_Aho_Corasick(Diccionario);
 

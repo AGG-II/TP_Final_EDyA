@@ -10,9 +10,9 @@
 #ifndef QUEUE_H
 #define QUEUE_H
 
-typedef struct GSList {
+typedef struct GList {
   void *dato;
-  struct GSList *siguiente;
+  struct GList *siguiente;
 } _Cola;
 
 typedef _Cola *NodoCola;
