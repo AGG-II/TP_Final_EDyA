@@ -32,25 +32,11 @@ void corregir_oracion(Parser par, char *oracion, FILE *destino) {
   cargar_resultados(intervalos, oracion, destino);
 }
 
-void parser_corregir_archivo(const char *fuente, Parser par,
-                             const char *objetivo) {
+void parser_corregir_archivo(FILE *fuente, Parser par, FILE *objetivo) {
   char oracion[BUFFER];
-  FILE *oraciones = fopen(fuente, "r");
-  if (oraciones == NULL) {
-    printf("No se pudo abrir el archivo \"%s\"", fuente);
-    return;
+  while (obtener_oracion(fuente, oracion)) {
+    corregir_oracion(par, oracion, objetivo);
   }
-  FILE *correcciones = fopen(objetivo, "w");
-  if (correcciones == NULL) {
-    fclose(oraciones);
-    printf("No se pudo crear el archivo \"%s\"", objetivo);
-    return;
-  }
-  while (obtener_oracion(oraciones, oracion)) {
-    corregir_oracion(par, oracion, correcciones);
-  }
-  fclose(oraciones);
-  fclose(correcciones);
 }
 
 void agregar_intervalo(Intervalo nuevo, SList enlaces) {

@@ -2,7 +2,7 @@
 #ifndef TRIE_H
 #define TRIE_H
 
-#include "queue/queue.h"
+#include "../queue/queue.h"
 #include <stdio.h>
 
 // No se realizará distinción entre mayúsculas y minúsculas.
@@ -11,8 +11,6 @@
 #define OFFSET 97
 // Dado un numero entre 0 y 25 retorna el ascii de la letra en dicha posicion.
 #define LETRA_QUE_REPRESENTA(x) x + OFFSET
-// Si no se ingresaron palabras entonces la posicion inicial es la final
-#define POSICION_TERMINADOR(x) x == 0 ? 0 : x - 1
 
 typedef enum {
   NO_FINAL, // Letra no terminal de una palabra

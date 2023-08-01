@@ -42,7 +42,6 @@ void queue_pop(Queue cola) {
   if (queue_nulo(cola) || queue_vacia(cola)) return;
 
   NodoCola nodoEliminar = cola->inicio;
-  // innecesario
   if (nodoEliminar == cola->final) cola->final = NULL;
   cola->inicio = nodoEliminar->siguiente;
   free(nodoEliminar);

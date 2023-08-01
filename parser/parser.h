@@ -2,13 +2,15 @@
 #ifndef PARSER_H
 #define PARSER_H
 
-#include "intervalo.h"
-#include "slist/slist.h"
-#include "trie.h"
+#include "../intervalo/intervalo.h"
+#include "../slist/slist.h"
+#include "../trie/trie.h"
 #include <stdio.h>
 #include <stdlib.h>
 
 #define BUFFER 1001 // Logitud máxima de una oración
+// Si no se ingresaron palabras entonces la posicion inicial es la final
+#define POSICION_TERMINADOR(x) x == 0 ? 0 : x - 1
 
 typedef Diccionario Parser;
 
@@ -49,10 +51,9 @@ void corregir_oracion(Parser, char *, FILE *);
 
 /**
  * Dado un parser cargado con un diccionario, un archivo con oraciones y el
- * nombre del archivo a crear. Crea un nuevo archivo con las oraciones
- * corregidas.
+ * archivo destino. Corrige las oraciones y las coloca en elarchivo destino.
  */
-void parser_corregir_archivo(const char *, Parser, const char *);
+void parser_corregir_archivo(FILE *, Parser, FILE *);
 
 /**
  * Agrega un intervalo a la lista de intervalos eliminando los que son de menor

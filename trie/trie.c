@@ -28,8 +28,8 @@ Diccionario diccionario_siguiente_estado(Diccionario letraActual, char letra) {
 }
 
 Diccionario crear_siguiente_estado(Diccionario posicionActual, char letra) {
-  Diccionario nodoSiguiente =
-      diccionario_siguiente_estado(posicionActual, letra);
+  int numeroAsociado = posicion_asociada(letra);
+  Diccionario nodoSiguiente = posicionActual->siguientes[numeroAsociado];
 
   if (diccionario_vacio(nodoSiguiente)) { // si el estado no existe
     int numeroAsociado = posicion_asociada(letra);
@@ -77,7 +77,7 @@ Queue invariantes_Aho_Corasick(Diccionario raiz) {
   Diccionario hijo;
   Queue nodosPorNivel = queue_crear(CANT_LETRAS);
   for (int i = 0; i < CANT_LETRAS; i++) {
-    // todos los hijo tienen como link de
+    // todos los hijo tienen como link de fallo
     hijo = raiz->siguientes[i];
     if (!diccionario_vacio(hijo)) {
       hijo->enlaceFallo = raiz;
