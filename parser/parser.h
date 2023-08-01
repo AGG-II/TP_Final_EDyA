@@ -15,6 +15,12 @@
 typedef Diccionario Parser;
 
 /**
+ * Utilizando las palabras del diccionario, coloca espacios en las oraciones del
+ * fuente en el destino.
+ */
+void parser_espaciar(FILE *, FILE *, FILE *);
+
+/**
  * Crea un parser.
  */
 Parser parser_crear();
@@ -23,11 +29,6 @@ Parser parser_crear();
  * Destruye un parser.
  */
 void parser_destruir(Parser);
-
-/**
- * Determina si un parser esta vacio.
- */
-int parser_vacio(Parser);
 
 /**
  * Dado un archivo con palabras las agrega al Diccionario del parser y aplica el

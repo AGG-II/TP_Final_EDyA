@@ -1,6 +1,16 @@
 #include "parser.h"
 #include <string.h>
 
+void parser_espaciar(FILE *diccionario, FILE *fuente, FILE *destino) {
+  Parser par = parser_crear();
+  parser_cargar_archivo(&par, diccionario);
+  parser_corregir_archivo(fuente, par, destino);
+  parser_destruir(par);
+  fclose(diccionario);
+  fclose(fuente);
+  fclose(destino);
+}
+
 Parser parser_crear() {
   Parser retorno = diccionario_crear();
   return retorno;
@@ -8,10 +18,7 @@ Parser parser_crear() {
 
 void parser_destruir(Parser destruir) { diccionario_destruir(destruir); }
 
-int parser_vacio(Parser par) { return diccionario_vacio(par); }
-
 void parser_cargar_archivo(Parser *par, FILE *fuente) {
-  if (parser_vacio(*par)) *par = parser_crear();
   diccionario_agregar_archivo(par, fuente);
   diccionario_algoritmo_Aho_Corasick(*par);
 }
