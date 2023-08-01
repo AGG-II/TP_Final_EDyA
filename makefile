@@ -1,15 +1,15 @@
 FLAGS = -Wall -Wextra -Werror -std=c99 -g
 
-programa: test.o parser.o trie.o queue.o slist.o intervalo.o
+main: main.o parser.o trie.o queue.o slist.o intervalo.o
 	$(CC) -o $@ $^ $(FLAGS)
 
-test.o: test.c parser.o queue.o trie.o
+main.o: main.c parser/parser.h
 	$(CC) -c $< $(FLAGS)
 
-parser.o: parser/parser.c parser/parser.h trie.o slist.o queue.o intervalo.o
+parser.o: parser/parser.c parser/parser.h queue/queue.h trie/trie.h intervalo/intervalo.h
 	$(CC) -c $< $(FLAGS)
 
-trie.o: trie/trie.c trie/trie.h queue.o
+trie.o: trie/trie.c trie/trie.h queue/queue.h
 	$(CC) -c $< $(FLAGS)
 
 queue.o: queue/queue.c queue/queue.h
@@ -23,7 +23,5 @@ intervalo.o: intervalo/intervalo.c intervalo/intervalo.h
 
 clean:
 	rm *.o
-	rm programa
-	rm pucha.txt
-
+	rm main
 .PHONY = clean

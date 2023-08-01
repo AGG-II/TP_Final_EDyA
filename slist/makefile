@@ -1,16 +1,16 @@
 FLAGS = -Wall -Wextra -Werror -std=c99 -g
 
-test_queue: test_queue.o queue.o
+test_slist: test_slist.o slist.o
 	$(CC) -o $@ $^ $(FLAGS)
 
-test_queue.o: test_queue.c test_queue.h queue.o
+test_slist.o: test_slist.c test_slist.h slist.o
 	$(CC) -c $< $(FLAGS)
 
-queue.o: queue.c queue.h
+slist.o: slist.c slist.h
 	$(CC) -c $< $(FLAGS)
 
 clean:
 	rm *.o
-	rm test_queue
+	rm test_slist
 
 .PHONY = clean

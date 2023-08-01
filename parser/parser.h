@@ -66,7 +66,7 @@ void agregar_intervalo(Intervalo, SList);
  * Dado un nodo con enalce terminal determina la posicion de la primera letra de
  * la palabra.
  */
-int posicion_incial(Parser, int);
+int posicion_inicial(Parser, int);
 
 /**
  * Agrega un enlace de una palabra a la lista de enlaces.
@@ -81,7 +81,7 @@ SList procesar_oracion(Parser, char *);
 
 /**
  * Dado los extremos de una palabra, un string destino desde donde escribir en
- * el ddestino y de donde leer la palabra. Escribe la palabra en el destino.
+ * el destino y de donde leer la palabra. Escribe la palabra en el destino.
  * Retorna la cantidad de caracteres escritos.
  */
 int cargar_string(Intervalo, char *, int, char *);
