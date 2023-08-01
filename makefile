@@ -24,6 +24,6 @@ intervalo.o: intervalo/intervalo.c intervalo/intervalo.h
 clean:
 	rm *.o
 	rm programa
-	rm ahora_si.txt
+	rm pucha.txt
 
 .PHONY = clean

@@ -23,11 +23,6 @@ typedef struct _Queue {
 } *Queue;
 
 /**
- * Determina si la cola esta inicializada.
- */
-int queue_nulo(Queue);
-
-/**
  * Determina si la cola dada está vacía.
  */
 int queue_vacia(Queue);
@@ -44,8 +39,9 @@ Queue queue_crear();
 
 /**
  * Inserta un nuevo elemento en la cola.
+ * Asume que la cola esta inicializada.
  */
-void queue_push(Queue *, void *);
+void queue_push(Queue, void *);
 
 /**
  * Retorna el primer elemento de la cola.

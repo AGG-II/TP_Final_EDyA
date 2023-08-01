@@ -1,11 +1,7 @@
 #include "queue.h"
 #include <stdlib.h>
 
-int queue_nulo(Queue cola) { return cola == NULL; }
-
-int queue_vacia(Queue cola) {
-  return cola->final == NULL || cola->inicio == NULL;
-}
+int queue_vacia(Queue cola) { return cola->inicio == NULL; }
 
 Queue queue_crear() {
   Queue vacio = malloc(sizeof(struct _Queue));
@@ -21,25 +17,22 @@ NodoCola crear_nodo(void *dato) {
   return vacio;
 }
 
-void queue_push(Queue *cola, void *dato) {
+void queue_push(Queue cola, void *dato) {
   NodoCola nuevoNodo = crear_nodo(dato);
-  if (queue_nulo(*cola)) {
-    (*cola) = queue_crear();
-  }
 
-  if (queue_vacia(*cola)) {
-    (*cola)->inicio = nuevoNodo;
+  if (cola->inicio == NULL) {
+    cola->inicio = nuevoNodo;
   } else {
-    (*cola)->final->siguiente = nuevoNodo;
+    cola->final->siguiente = nuevoNodo;
   }
 
-  (*cola)->final = nuevoNodo;
+  cola->final = nuevoNodo;
 }
 
 void *queue_top(Queue cola) { return cola->inicio->dato; }
 
 void queue_pop(Queue cola) {
-  if (queue_nulo(cola) || queue_vacia(cola)) return;
+  if (cola->inicio == NULL) return;
 
   NodoCola nodoEliminar = cola->inicio;
   if (nodoEliminar == cola->final) cola->final = NULL;
@@ -48,7 +41,7 @@ void queue_pop(Queue cola) {
 }
 
 void queue_destruir(Queue cola) {
-  while (!queue_vacia(cola)) {
+  while (cola->inicio != NULL) {
     queue_pop(cola);
   }
   free(cola);
